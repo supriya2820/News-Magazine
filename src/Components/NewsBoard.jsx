@@ -3,7 +3,7 @@ import Newsitem from "./Newsitem";
 
 const NewsBoard = ({ category }) => {
   const [articles, setArticles] = useState([]);
-  const [error, setError] = useState(false); // optional
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     const fetchNews = async () => {
@@ -15,10 +15,11 @@ const NewsBoard = ({ category }) => {
         if (data.status !== "ok") throw new Error("API error");
 
         setArticles(data.articles || []);
+        setError(false);
       } catch (err) {
         console.error("Failed to fetch news:", err);
-        setArticles([]);  // fallback to empty list
-        setError(true);    // optional, for UI
+        setArticles([]);
+        setError(true);
       }
     };
 
@@ -33,8 +34,10 @@ const NewsBoard = ({ category }) => {
 
       <div className="container-fluid px-0">
         <div className="row gx-3 gy-3">
-          {articles?.length > 0 ? (
-            articles.map((news, index) => (
+          {error ? (
+            <p className="text-center text-danger">Failed to load news. Please try again later.</p>
+          ) : (
+            articles?.map((news, index) => (
               <div key={index} className="col-12 col-sm-6 col-md-4 col-lg-3">
                 <Newsitem
                   title={news.title}
@@ -44,8 +47,6 @@ const NewsBoard = ({ category }) => {
                 />
               </div>
             ))
-          ) : (
-            <p className="text-center text-muted">No news available or API error.</p>
           )}
         </div>
       </div>
